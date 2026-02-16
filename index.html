@@ -1,0 +1,1752 @@
+const API_URL = "1Wql4AhfrVbp96YSszESPsiEAlB8XnDPDRWP5MCSAh5s";
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Law Hands Task Manager</title>
+    
+    <!-- PWA Meta Tags -->
+    <meta name="description" content="Law Hands Task Management System - Manage tasks efficiently">
+    <meta name="theme-color" content="#667eea">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Law Hands Tasks">
+    
+    <!-- Favicon and App Icons -->
+    <link rel="icon" type="image/png" id="favicon">
+    <link rel="apple-touch-icon" id="apple-icon">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .login-card {
+            background: white;
+            border-radius: 12px;
+            padding: 40px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            max-width: 400px;
+            margin: 100px auto;
+        }
+
+        .app-header {
+            background: white;
+            border-radius: 12px;
+            padding: 20px 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-badge {
+            background: #667eea;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: #f3f4f6;
+            color: #374151;
+        }
+
+        .btn-secondary:hover {
+            background: #e5e7eb;
+        }
+
+        .btn-danger {
+            background: #ef4444;
+            color: white;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #374151;
+            font-weight: 500;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: inherit;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            gap: 20px;
+        }
+
+        .sidebar {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            height: fit-content;
+        }
+
+        .nav-item {
+            padding: 12px 16px;
+            margin-bottom: 8px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-item:hover {
+            background: #f3f4f6;
+        }
+
+        .nav-item.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .main-content {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            min-height: 600px;
+        }
+
+        .task-card {
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+            transition: all 0.3s;
+        }
+
+        .task-card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+        }
+
+        .task-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 12px;
+        }
+
+        .task-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #111827;
+        }
+
+        .task-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .badge {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .badge-bank {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .badge-management {
+            background: #fce7f3;
+            color: #9f1239;
+        }
+
+        .badge-followup {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .badge-pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .badge-completed {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .badge-in-progress {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .close-btn {
+            font-size: 24px;
+            cursor: pointer;
+            color: #6b7280;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        h2 {
+            color: #111827;
+            margin-bottom: 20px;
+        }
+
+        .search-bar {
+            margin-bottom: 20px;
+        }
+
+        .filters {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 8px 16px;
+            border: 1px solid #d1d5db;
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .filter-btn.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #6b7280;
+        }
+
+        .empty-state-icon {
+            font-size: 64px;
+            margin-bottom: 16px;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                display: flex;
+                overflow-x: auto;
+                padding: 10px;
+            }
+
+            .nav-item {
+                white-space: nowrap;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .task-description {
+            color: #6b7280;
+            margin-top: 8px;
+            font-size: 14px;
+        }
+
+        .task-employee {
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid #e5e7eb;
+            font-size: 14px;
+            color: #374151;
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Screen -->
+    <div id="loginScreen">
+        <div class="login-card">
+            <div style="text-align: center; margin-bottom: 30px;">
+                <div class="logo" style="font-size: 32px;">📋 Task Manager</div>
+                <p style="color: #6b7280; margin-top: 10px;">Law Hands Task Management System</p>
+            </div>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label>User ID</label>
+                    <input type="text" id="loginId" placeholder="Enter your user ID" required>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="loginPassword" placeholder="Enter your password" required>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Login</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Main Application -->
+    <div id="appScreen" class="hidden">
+        <div class="container">
+            <div class="app-header">
+                <div class="logo">📋 Task Manager</div>
+                <div class="user-info">
+                    <span class="user-badge" id="userBadge"></span>
+                    <button class="btn btn-secondary" onclick="logout()">Logout</button>
+                </div>
+            </div>
+
+            <div class="dashboard">
+                <div class="sidebar">
+                    <div class="nav-item active" onclick="showSection('dashboard')">
+                        📊 Dashboard
+                    </div>
+                    <div class="nav-item" onclick="showSection('tasks')">
+                        📝 Tasks
+                    </div>
+                    <div class="nav-item" onclick="showSection('assign')" id="assignNav">
+                        ➕ Assign Task
+                    </div>
+                    <div class="nav-item" onclick="showSection('employees')" id="employeesNav">
+                        👥 Employees
+                    </div>
+                    <div class="nav-item" onclick="showSection('managers')" id="managersNav">
+                        👔 Managers
+                    </div>
+                    <div class="nav-item" onclick="showSection('users')" id="usersNav">
+                        🔧 User Management
+                    </div>
+                    <div class="nav-item" onclick="showSection('changePassword')">
+                        🔒 Change Password
+                    </div>
+                    <div class="nav-item" onclick="showSection('export')" id="exportNav">
+                        📊 Export Data
+                    </div>
+                </div>
+
+                <div class="main-content">
+                    <!-- Dashboard Section -->
+                    <div id="dashboardSection">
+                        <h2>Dashboard</h2>
+                        <div style="display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap; align-items: center;">
+                            <div style="display: flex; gap: 10px; align-items: center;">
+                                <label style="margin: 0; font-weight: 500;">From:</label>
+                                <input type="date" id="dashboardStartDate" style="padding: 8px; border: 1px solid #d1d5db; border-radius: 6px;">
+                            </div>
+                            <div style="display: flex; gap: 10px; align-items: center;">
+                                <label style="margin: 0; font-weight: 500;">To:</label>
+                                <input type="date" id="dashboardEndDate" style="padding: 8px; border: 1px solid #d1d5db; border-radius: 6px;">
+                            </div>
+                            <button class="btn btn-primary" onclick="applyDashboardDateFilter()" style="padding: 8px 16px;">Apply Filter</button>
+                            <button class="btn btn-secondary" onclick="clearDashboardDateFilter()" style="padding: 8px 16px;">Clear</button>
+                        </div>
+                        <div class="stats-grid" id="statsGrid"></div>
+                        <h3 style="margin-top: 30px; margin-bottom: 15px;">Recent Tasks</h3>
+                        <div id="recentTasks"></div>
+                    </div>
+
+                    <!-- Tasks Section -->
+                    <div id="tasksSection" class="hidden">
+                        <h2>All Tasks</h2>
+                        <div class="search-bar">
+                            <input type="text" id="searchInput" placeholder="Search tasks..." onkeyup="filterTasks()">
+                        </div>
+                        <div class="filters">
+                            <button class="filter-btn active" onclick="filterByCategory('all')">All</button>
+                            <button class="filter-btn" onclick="filterByCategory('Bank Visit')">Bank Visit</button>
+                            <button class="filter-btn" onclick="filterByCategory('Management Work')">Management Work</button>
+                            <button class="filter-btn" onclick="filterByCategory('File Followup')">File Followup</button>
+                        </div>
+                        <div class="filters">
+                            <button class="filter-btn" onclick="filterByStatus('all')">All Status</button>
+                            <button class="filter-btn" onclick="filterByStatus('Pending')">Pending</button>
+                            <button class="filter-btn" onclick="filterByStatus('In Progress')">In Progress</button>
+                            <button class="filter-btn" onclick="filterByStatus('Completed')">Completed</button>
+                        </div>
+                        <div id="tasksList"></div>
+                    </div>
+
+                    <!-- Assign Task Section (Manager Only) -->
+                    <div id="assignSection" class="hidden">
+                        <h2>Assign New Task</h2>
+                        <form id="assignTaskForm">
+                            <div class="form-group">
+                                <label>Task Category *</label>
+                                <select id="taskCategory" required onchange="updateSubcategories()">
+                                    <option value="">Select Category</option>
+                                    <option value="Bank Visit">Bank Visit</option>
+                                    <option value="Management Work">Management Work</option>
+                                    <option value="File Followup">File Followup</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Subcategory *</label>
+                                <select id="taskSubcategory" required>
+                                    <option value="">Select Subcategory</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Task Title *</label>
+                                <input type="text" id="taskTitle" placeholder="Enter task title" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Description</label>
+                                <textarea id="taskDescription" rows="4" placeholder="Enter task description"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label>Assign to Employee *</label>
+                                <select id="assignEmployee" required>
+                                    <option value="">Select Employee</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Due Date *</label>
+                                <input type="date" id="taskDueDate" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Priority *</label>
+                                <select id="taskPriority" required>
+                                    <option value="">Select Priority</option>
+                                    <option value="Low">Low</option>
+                                    <option value="Medium">Medium</option>
+                                    <option value="High">High</option>
+                                    <option value="Urgent">Urgent</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Assign Task</button>
+                        </form>
+                    </div>
+
+                    <!-- Employees Section (Manager Only) -->
+                    <div id="employeesSection" class="hidden">
+                        <h2>Employees</h2>
+                        <button class="btn btn-primary" onclick="showAddEmployeeModal()" style="margin-bottom: 20px;">Add Employee</button>
+                        <div id="employeesList"></div>
+                    </div>
+
+                    <!-- Managers Section (Admin Only) -->
+                    <div id="managersSection" class="hidden">
+                        <h2>Managers</h2>
+                        <button class="btn btn-primary" onclick="showAddManagerModal()" style="margin-bottom: 20px;">Add Manager</button>
+                        <div id="managersList"></div>
+                    </div>
+
+                    <!-- User Management Section (Admin Only) -->
+                    <div id="usersSection" class="hidden">
+                        <h2>All Users Management</h2>
+                        <div class="filters" style="margin-bottom: 20px;">
+                            <button class="filter-btn active" onclick="filterUsers('all')">All Users</button>
+                            <button class="filter-btn" onclick="filterUsers('admin')">Admins</button>
+                            <button class="filter-btn" onclick="filterUsers('manager')">Managers</button>
+                            <button class="filter-btn" onclick="filterUsers('employee')">Employees</button>
+                        </div>
+                        <div id="allUsersList"></div>
+                    </div>
+
+                    <!-- Change Password Section (All Users) -->
+                    <div id="changePasswordSection" class="hidden">
+                        <h2>Change Password</h2>
+                        <div style="max-width: 500px;">
+                            <div style="padding: 15px; background: #fef3c7; border-left: 4px solid #f59e0b; border-radius: 6px; margin-bottom: 20px;">
+                                <strong>⚠️ Security Reminder:</strong>
+                                <ul style="margin: 10px 0 0 20px; color: #92400e;">
+                                    <li>Use a strong password (minimum 8 characters)</li>
+                                    <li>Include letters, numbers, and special characters</li>
+                                    <li>Don't share your password with anyone</li>
+                                </ul>
+                            </div>
+                            <form id="changePasswordForm">
+                                <div class="form-group">
+                                    <label>Current Password *</label>
+                                    <input type="password" id="currentPassword" placeholder="Enter current password" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>New Password *</label>
+                                    <input type="password" id="newPassword" placeholder="Enter new password" required minlength="6">
+                                    <small style="color: #6b7280; font-size: 12px;">Minimum 6 characters</small>
+                                </div>
+                                <div class="form-group">
+                                    <label>Confirm New Password *</label>
+                                    <input type="password" id="confirmPassword" placeholder="Re-enter new password" required minlength="6">
+                                </div>
+                                <button type="submit" class="btn btn-primary">Change Password</button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Export Data Section (Admin/Manager Only) -->
+                    <div id="exportSection" class="hidden">
+                        <h2>Export Data to Google Sheets</h2>
+                        <div style="max-width: 600px;">
+                            <div style="padding: 15px; background: #dbeafe; border-left: 4px solid #3b82f6; border-radius: 6px; margin-bottom: 20px;">
+                                <strong>📊 Export Options:</strong>
+                                <ul style="margin: 10px 0 0 20px; color: #1e40af;">
+                                    <li>Export all tasks or filter by custom date range</li>
+                                    <li>Download as CSV file for Google Sheets import</li>
+                                    <li>Includes all task details and user information</li>
+                                    <li>Hidden completed tasks (30+ days) are also included in export</li>
+                                </ul>
+                            </div>
+
+                            <div style="background: white; padding: 20px; border: 1px solid #e5e7eb; border-radius: 8px; margin-bottom: 20px;">
+                                <h3 style="margin-bottom: 15px; font-size: 16px;">Export All Tasks</h3>
+                                <p style="color: #6b7280; font-size: 14px; margin-bottom: 15px;">Download all tasks in the system regardless of date.</p>
+                                <button class="btn btn-primary" onclick="exportAllTasks()">
+                                    📥 Export All Tasks
+                                </button>
+                            </div>
+
+                            <div style="background: white; padding: 20px; border: 1px solid #e5e7eb; border-radius: 8px;">
+                                <h3 style="margin-bottom: 15px; font-size: 16px;">Export by Date Range</h3>
+                                <p style="color: #6b7280; font-size: 14px; margin-bottom: 15px;">Export tasks created within a specific date range.</p>
+                                
+                                <div style="display: flex; gap: 15px; margin-bottom: 15px; flex-wrap: wrap;">
+                                    <div style="flex: 1; min-width: 200px;">
+                                        <label style="display: block; margin-bottom: 8px; font-weight: 500;">From Date:</label>
+                                        <input type="date" id="exportStartDate" style="width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 6px;">
+                                    </div>
+                                    <div style="flex: 1; min-width: 200px;">
+                                        <label style="display: block; margin-bottom: 8px; font-weight: 500;">To Date:</label>
+                                        <input type="date" id="exportEndDate" style="width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 6px;">
+                                    </div>
+                                </div>
+                                
+                                <button class="btn btn-primary" onclick="exportByDateRange()">
+                                    📥 Export Date Range
+                                </button>
+                            </div>
+
+                            <div style="margin-top: 20px; padding: 15px; background: #f3f4f6; border-radius: 6px; font-size: 13px; color: #374151;">
+                                <strong>How to import to Google Sheets:</strong>
+                                <ol style="margin: 10px 0 0 20px;">
+                                    <li>Click export button to download CSV file</li>
+                                    <li>Open Google Sheets (sheets.google.com)</li>
+                                    <li>Click File → Import</li>
+                                    <li>Upload the CSV file</li>
+                                    <li>Choose "Replace current sheet" or "Insert new sheet"</li>
+                                    <li>Click "Import data"</li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Task Details Modal -->
+    <div id="taskModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Task Details</h2>
+                <span class="close-btn" onclick="closeTaskModal()">&times;</span>
+            </div>
+            <div id="taskModalContent"></div>
+        </div>
+    </div>
+
+    <!-- Add Employee Modal -->
+    <div id="employeeModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Add New Employee</h2>
+                <span class="close-btn" onclick="closeEmployeeModal()">&times;</span>
+            </div>
+            <form id="addEmployeeForm">
+                <div class="form-group">
+                    <label>Employee Name *</label>
+                    <input type="text" id="empName" required>
+                </div>
+                <div class="form-group">
+                    <label>User ID *</label>
+                    <input type="text" id="empId" required>
+                </div>
+                <div class="form-group">
+                    <label>Password *</label>
+                    <input type="password" id="empPassword" required>
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="empEmail">
+                </div>
+                <div class="form-group">
+                    <label>Department</label>
+                    <input type="text" id="empDepartment">
+                </div>
+                <button type="submit" class="btn btn-primary">Add Employee</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Manager Modal -->
+    <div id="managerModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Add New Manager</h2>
+                <span class="close-btn" onclick="closeManagerModal()">&times;</span>
+            </div>
+            <form id="addManagerForm">
+                <div class="form-group">
+                    <label>Manager Name *</label>
+                    <input type="text" id="mgrName" required>
+                </div>
+                <div class="form-group">
+                    <label>User ID *</label>
+                    <input type="text" id="mgrId" required>
+                </div>
+                <div class="form-group">
+                    <label>Password *</label>
+                    <input type="password" id="mgrPassword" required>
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="mgrEmail">
+                </div>
+                <div class="form-group">
+                    <label>Department</label>
+                    <input type="text" id="mgrDepartment">
+                </div>
+                <button type="submit" class="btn btn-primary">Add Manager</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Data Structure
+        const subcategories = {
+            "Bank Visit": [
+                "New Business",
+                "Collection",
+                "Regular Visit"
+            ],
+            "Management Work": [
+                "Report Preparation",
+                "Team Meeting",
+                "Strategy Planning",
+                "Performance Review",
+                "Budget Planning"
+            ],
+            "File Followup": [
+                "Query Received Follow up",
+                "Verification Follow up",
+                "Deviation Follow up",
+                "MODT Draft Follow up"
+            ]
+        };
+
+        // Initialize data from localStorage or use defaults
+        let users = JSON.parse(localStorage.getItem('taskManagerUsers')) || [
+            { id: 'ADMIN', password: 'admin123', name: 'System Administrator', role: 'admin', email: 'admin@org.com', department: 'Administration' },
+            { id: 'MGR001', password: 'manager123', name: 'John Manager', role: 'manager', email: 'manager@org.com', department: 'Management' },
+            { id: 'EMP001', password: 'employee123', name: 'Sarah Employee', role: 'employee', email: 'sarah@org.com', department: 'Operations' },
+            { id: 'EMP002', password: 'employee123', name: 'Mike Worker', role: 'employee', email: 'mike@org.com', department: 'Operations' }
+        ];
+
+        let tasks = JSON.parse(localStorage.getItem('taskManagerTasks')) || [
+            {
+                id: 'TSK001',
+                category: 'Bank Visit',
+                subcategory: 'Account Opening',
+                title: 'New Account Setup - ABC Corp',
+                description: 'Visit bank to setup corporate account for new client',
+                assignedTo: 'EMP001',
+                assignedBy: 'MGR001',
+                status: 'In Progress',
+                priority: 'High',
+                dueDate: '2026-02-20',
+                createdDate: '2026-02-10'
+            },
+            {
+                id: 'TSK002',
+                category: 'File Followup',
+                subcategory: 'Document Collection',
+                title: 'Collect KYC Documents - Client XYZ',
+                description: 'Follow up and collect pending KYC documents',
+                assignedTo: 'EMP002',
+                assignedBy: 'MGR001',
+                status: 'Pending',
+                priority: 'Medium',
+                dueDate: '2026-02-18',
+                createdDate: '2026-02-11'
+            }
+        ];
+
+        let currentUser = null;
+        let currentFilter = { category: 'all', status: 'all' };
+        let dashboardDateFilter = { startDate: null, endDate: null };
+
+        // Save data to localStorage
+        async function saveTaskToServer(task) {
+            await fetch(API_URL, {
+            	method: "POST",
+            	body: JSON.stringify({
+            		action: "addTask",
+                        ...task
+                })
+            });
+        }
+
+        // Helper function to check if task should be hidden (completed 30+ days ago)
+        function shouldHideCompletedTask(task) {
+            if (task.status !== 'Completed') {
+                return false; // Don't hide non-completed tasks
+            }
+            
+            // Check if task has a completion date (we'll need to add this when status is updated)
+            if (!task.completedDate) {
+                return false; // Don't hide if no completion date set
+            }
+            
+            const completedDate = new Date(task.completedDate);
+            const thirtyDaysAgo = new Date();
+            thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+            
+            return completedDate < thirtyDaysAgo;
+        }
+
+        // Apply dashboard date filter
+        function applyDashboardDateFilter() {
+            const startDate = document.getElementById('dashboardStartDate').value;
+            const endDate = document.getElementById('dashboardEndDate').value;
+            
+            if (!startDate || !endDate) {
+                alert('Please select both start and end dates');
+                return;
+            }
+            
+            if (new Date(startDate) > new Date(endDate)) {
+                alert('Start date cannot be after end date');
+                return;
+            }
+            
+            dashboardDateFilter.startDate = startDate;
+            dashboardDateFilter.endDate = endDate;
+            loadFromServer();
+        }
+
+        // Clear dashboard date filter
+        function clearDashboardDateFilter() {
+            dashboardDateFilter.startDate = null;
+            dashboardDateFilter.endDate = null;
+            document.getElementById('dashboardStartDate').value = '';
+            document.getElementById('dashboardEndDate').value = '';
+            loadFromServer();
+        }
+
+        // Filter tasks by date range
+        function filterTasksByDateRange(tasksList) {
+            if (!dashboardDateFilter.startDate || !dashboardDateFilter.endDate) {
+                return tasksList;
+            }
+            
+            const startDate = new Date(dashboardDateFilter.startDate);
+            const endDate = new Date(dashboardDateFilter.endDate);
+            endDate.setHours(23, 59, 59, 999); // Include the entire end date
+            
+            return tasksList.filter(task => {
+                const taskDate = new Date(task.createdDate);
+                return taskDate >= startDate && taskDate <= endDate;
+            });
+        }
+
+        // Login
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const id = document.getElementById('loginId').value;
+            const password = document.getElementById('loginPassword').value;
+
+            const user = users.find(u => u.id === id && u.password === password);
+            
+            if (user) {
+                currentUser = user;
+                document.getElementById('loginScreen').classList.add('hidden');
+                document.getElementById('appScreen').classList.remove('hidden');
+                document.getElementById('userBadge').textContent = `${user.name} (${user.role.toUpperCase()})`;
+                
+                // Show/hide sections based on role
+                if (user.role === 'admin') {
+                    // Admin sees everything
+                    document.getElementById('assignNav').style.display = 'block';
+                    document.getElementById('employeesNav').style.display = 'block';
+                    document.getElementById('managersNav').style.display = 'block';
+                    document.getElementById('usersNav').style.display = 'block';
+                    document.getElementById('exportNav').style.display = 'block';
+                } else if (user.role === 'manager') {
+                    // Manager can assign tasks, view employees, and export
+                    document.getElementById('assignNav').style.display = 'block';
+                    document.getElementById('employeesNav').style.display = 'block';
+                    document.getElementById('managersNav').style.display = 'none';
+                    document.getElementById('usersNav').style.display = 'none';
+                    document.getElementById('exportNav').style.display = 'block';
+                } else {
+                    // Employee has limited access - NO EXPORT
+                    document.getElementById('assignNav').style.display = 'none';
+                    document.getElementById('employeesNav').style.display = 'none';
+                    document.getElementById('managersNav').style.display = 'none';
+                    document.getElementById('usersNav').style.display = 'none';
+                    document.getElementById('exportNav').style.display = 'none';
+                }
+                
+                loadFromServer();
+            } else {
+                alert('Invalid credentials!');
+            }
+        });
+
+        // Logout
+        function logout() {
+            currentUser = null;
+            document.getElementById('loginScreen').classList.remove('hidden');
+            document.getElementById('appScreen').classList.add('hidden');
+            document.getElementById('loginForm').reset();
+        }
+
+        // Show Section
+        function showSection(section) {
+            document.querySelectorAll('.main-content > div').forEach(div => div.classList.add('hidden'));
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+            
+            switch(section) {
+                case 'dashboard':
+                    document.getElementById('dashboardSection').classList.remove('hidden');
+                    loadFromServer();
+                    break;
+                case 'tasks':
+                    document.getElementById('tasksSection').classList.remove('hidden');
+                    loadTasks();
+                    break;
+                case 'assign':
+                    document.getElementById('assignSection').classList.remove('hidden');
+                    loadEmployeeDropdown();
+                    break;
+                case 'employees':
+                    document.getElementById('employeesSection').classList.remove('hidden');
+                    loadEmployees();
+                    break;
+                case 'managers':
+                    document.getElementById('managersSection').classList.remove('hidden');
+                    loadManagers();
+                    break;
+                case 'users':
+                    document.getElementById('usersSection').classList.remove('hidden');
+                    loadAllUsers();
+                    break;
+                case 'changePassword':
+                    document.getElementById('changePasswordSection').classList.remove('hidden');
+                    break;
+                case 'export':
+                    document.getElementById('exportSection').classList.remove('hidden');
+                    break;
+            }
+            
+            event.target.classList.add('active');
+        }
+
+        // Load Dashboard
+        function loadDashboard() {
+            let userTasks;
+            
+            if (currentUser.role === 'admin' || currentUser.role === 'manager') {
+                userTasks = tasks;
+            } else {
+                userTasks = tasks.filter(t => t.assignedTo === currentUser.id);
+            }
+
+            // Filter out completed tasks older than 30 days
+            userTasks = userTasks.filter(task => !shouldHideCompletedTask(task));
+
+            // Apply date range filter if set
+            const filteredTasks = filterTasksByDateRange(userTasks);
+
+            const stats = {
+                total: filteredTasks.length,
+                pending: filteredTasks.filter(t => t.status === 'Pending').length,
+                inProgress: filteredTasks.filter(t => t.status === 'In Progress').length,
+                completed: filteredTasks.filter(t => t.status === 'Completed').length
+            };
+
+            const statsHTML = `
+                <div class="stat-card">
+                    <div class="stat-value">${stats.total}</div>
+                    <div class="stat-label">Total Tasks</div>
+                </div>
+                <div class="stat-card" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);">
+                    <div class="stat-value">${stats.pending}</div>
+                    <div class="stat-label">Pending</div>
+                </div>
+                <div class="stat-card" style="background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);">
+                    <div class="stat-value">${stats.inProgress}</div>
+                    <div class="stat-label">In Progress</div>
+                </div>
+                <div class="stat-card" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
+                    <div class="stat-value">${stats.completed}</div>
+                    <div class="stat-label">Completed</div>
+                </div>
+            `;
+
+            document.getElementById('statsGrid').innerHTML = statsHTML;
+
+            // Recent tasks (show last 10, filtered)
+            const recentTasks = filteredTasks.slice(-10).reverse();
+            
+            if (recentTasks.length === 0) {
+                document.getElementById('recentTasks').innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📭</div>
+                        <h3>No tasks found</h3>
+                        <p>${dashboardDateFilter.startDate ? 'No tasks found in the selected date range.' : 'No active tasks available.'}</p>
+                    </div>
+                `;
+            } else {
+                document.getElementById('recentTasks').innerHTML = recentTasks.map(task => renderTaskCard(task)).join('');
+            }
+        }
+
+        // Render Task Card
+        function renderTaskCard(task) {
+            const employee = users.find(u => u.id === task.assignedTo);
+            const manager = users.find(u => u.id === task.assignedBy);
+            
+            return `
+                <div class="task-card" onclick="showTaskDetails('${task.id}')">
+                    <div class="task-header">
+                        <div>
+                            <div class="task-title">${task.title}</div>
+                            <div class="task-meta">
+                                <span class="badge badge-${task.category.toLowerCase().replace(' ', '-')}">${task.category}</span>
+                                <span class="badge badge-${task.status.toLowerCase().replace(' ', '-')}">${task.status}</span>
+                                <span class="badge" style="background: #fee2e2; color: #991b1b;">${task.priority}</span>
+                            </div>
+                        </div>
+                        <div style="text-align: right; font-size: 12px; color: #6b7280;">
+                            Due: ${new Date(task.dueDate).toLocaleDateString()}
+                        </div>
+                    </div>
+                    ${task.description ? `<div class="task-description">${task.description}</div>` : ''}
+                    <div class="task-employee">
+                        <strong>Assigned to:</strong> ${employee ? employee.name : 'Unknown'}<br>
+                        <strong>Assigned by:</strong> ${manager ? manager.name : 'Unknown'}
+                    </div>
+                </div>
+            `;
+        }
+
+        // Load Tasks
+        function loadTasks() {
+            let userTasks;
+            
+            if (currentUser.role === 'admin' || currentUser.role === 'manager') {
+                userTasks = tasks;
+            } else {
+                userTasks = tasks.filter(t => t.assignedTo === currentUser.id);
+            }
+
+            // Filter out completed tasks older than 30 days
+            userTasks = userTasks.filter(task => !shouldHideCompletedTask(task));
+
+            let filteredTasks = userTasks;
+
+            if (currentFilter.category !== 'all') {
+                filteredTasks = filteredTasks.filter(t => t.category === currentFilter.category);
+            }
+
+            if (currentFilter.status !== 'all') {
+                filteredTasks = filteredTasks.filter(t => t.status === currentFilter.status);
+            }
+
+            if (filteredTasks.length === 0) {
+                document.getElementById('tasksList').innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📭</div>
+                        <h3>No tasks found</h3>
+                        <p>There are no tasks matching your filters.</p>
+                    </div>
+                `;
+            } else {
+                document.getElementById('tasksList').innerHTML = filteredTasks.map(task => renderTaskCard(task)).join('');
+            }
+        }
+
+        // Filter Tasks
+        function filterByCategory(category) {
+            currentFilter.category = category;
+            document.querySelectorAll('.filters button').forEach(btn => {
+                if (btn.textContent.includes(category === 'all' ? 'All' : category)) {
+                    btn.classList.add('active');
+                } else if (!btn.textContent.includes('Status')) {
+                    btn.classList.remove('active');
+                }
+            });
+            loadTasks();
+        }
+
+        function filterByStatus(status) {
+            currentFilter.status = status;
+            document.querySelectorAll('.filters button').forEach(btn => {
+                if (btn.textContent.includes(status === 'all' ? 'All Status' : status)) {
+                    btn.classList.add('active');
+                } else if (btn.textContent.includes('Status') || btn.textContent.includes('Pending') || btn.textContent.includes('Progress') || btn.textContent.includes('Completed')) {
+                    btn.classList.remove('active');
+                }
+            });
+            loadTasks();
+        }
+
+        function filterTasks() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            let userTasks;
+            
+            if (currentUser.role === 'admin' || currentUser.role === 'manager') {
+                userTasks = tasks;
+            } else {
+                userTasks = tasks.filter(t => t.assignedTo === currentUser.id);
+            }
+
+            // Filter out completed tasks older than 30 days
+            userTasks = userTasks.filter(task => !shouldHideCompletedTask(task));
+
+            const filtered = userTasks.filter(task => 
+                task.title.toLowerCase().includes(searchTerm) ||
+                task.description.toLowerCase().includes(searchTerm) ||
+                task.category.toLowerCase().includes(searchTerm)
+            );
+
+            document.getElementById('tasksList').innerHTML = filtered.map(task => renderTaskCard(task)).join('');
+        }
+
+        // Update Subcategories
+        function updateSubcategories() {
+            const category = document.getElementById('taskCategory').value;
+            const subcategorySelect = document.getElementById('taskSubcategory');
+            
+            subcategorySelect.innerHTML = '<option value="">Select Subcategory</option>';
+            
+            if (category && subcategories[category]) {
+                subcategories[category].forEach(sub => {
+                    const option = document.createElement('option');
+                    option.value = sub;
+                    option.textContent = sub;
+                    subcategorySelect.appendChild(option);
+                });
+            }
+        }
+
+        // Load Employee Dropdown
+        function loadEmployeeDropdown() {
+            const select = document.getElementById('assignEmployee');
+            select.innerHTML = '<option value="">Select Employee</option>';
+            
+            users.filter(u => u.role === 'employee').forEach(emp => {
+                const option = document.createElement('option');
+                option.value = emp.id;
+                option.textContent = `${emp.name} (${emp.id})`;
+                select.appendChild(option);
+            });
+        }
+
+        // Assign Task
+        document.getElementById('assignTaskForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const newTask = {
+                id: 'TSK' + String(tasks.length + 1).padStart(3, '0'),
+                category: document.getElementById('taskCategory').value,
+                subcategory: document.getElementById('taskSubcategory').value,
+                title: document.getElementById('taskTitle').value,
+                description: document.getElementById('taskDescription').value,
+                assignedTo: document.getElementById('assignEmployee').value,
+                assignedBy: currentUser.id,
+                status: 'Pending',
+                priority: document.getElementById('taskPriority').value,
+                dueDate: document.getElementById('taskDueDate').value,
+                createdDate: new Date().toISOString().split('T')[0]
+            };
+
+            await saveTaskToServer(newTask);
+            alert("Task saved to Google Sheet!");
+            
+            alert('Task assigned successfully!');
+            this.reset();
+            showSection('tasks');
+        });
+            async function loadFromServer() {
+  		const res = await fetch(API_URL);
+  		const data = await res.json();
+
+  		users = convertToObjects(data.users);
+  		tasks = convertToObjects(data.tasks);
+
+  		loadDashboard();
+	    }
+
+            function convertToObjects(arrayData) {
+ 		 const headers = arrayData[0];
+ 		 return arrayData.slice(1).map(row => {
+    			let obj = {};
+    			headers.forEach((header, i) => {
+      				obj[header] = row[i];
+   	                });
+                        return obj;
+                 });
+             }
+
+        // Show Task Details
+        function showTaskDetails(taskId) {
+            const task = tasks.find(t => t.id === taskId);
+            if (!task) return;
+
+            const employee = users.find(u => u.id === task.assignedTo);
+            const manager = users.find(u => u.id === task.assignedBy);
+
+            const canUpdateStatus = currentUser.id === task.assignedTo || currentUser.role === 'manager' || currentUser.role === 'admin';
+            const canDelete = currentUser.role === 'admin';
+
+            const modalContent = `
+                <div style="margin-bottom: 20px;">
+                    <h3>${task.title}</h3>
+                    <div class="task-meta" style="margin-top: 10px;">
+                        <span class="badge badge-${task.category.toLowerCase().replace(' ', '-')}">${task.category}</span>
+                        <span class="badge">${task.subcategory}</span>
+                        <span class="badge badge-${task.status.toLowerCase().replace(' ', '-')}">${task.status}</span>
+                        <span class="badge" style="background: #fee2e2; color: #991b1b;">${task.priority}</span>
+                    </div>
+                </div>
+                
+                <div style="margin-bottom: 15px;">
+                    <strong>Description:</strong>
+                    <p style="color: #6b7280; margin-top: 5px;">${task.description || 'No description provided'}</p>
+                </div>
+
+                <div style="margin-bottom: 15px;">
+                    <strong>Assigned to:</strong> ${employee ? employee.name : 'Unknown'} (${task.assignedTo})<br>
+                    <strong>Assigned by:</strong> ${manager ? manager.name : 'Unknown'} (${task.assignedBy})
+                </div>
+
+                <div style="margin-bottom: 15px;">
+                    <strong>Created:</strong> ${new Date(task.createdDate).toLocaleDateString()}<br>
+                    <strong>Due Date:</strong> ${new Date(task.dueDate).toLocaleDateString()}
+                    ${task.completedDate ? `<br><strong>Completed:</strong> ${new Date(task.completedDate).toLocaleDateString()}` : ''}
+                </div>
+
+                ${canUpdateStatus ? `
+                    <div class="form-group">
+                        <label>Update Status:</label>
+                        <select id="updateStatus" class="form-control">
+                            <option value="Pending" ${task.status === 'Pending' ? 'selected' : ''}>Pending</option>
+                            <option value="In Progress" ${task.status === 'In Progress' ? 'selected' : ''}>In Progress</option>
+                            <option value="Completed" ${task.status === 'Completed' ? 'selected' : ''}>Completed</option>
+                        </select>
+                    </div>
+                    <div style="display: flex; gap: 10px;">
+                        <button class="btn btn-primary" onclick="updateTaskStatus('${task.id}')">Update Status</button>
+                        ${canDelete ? `<button class="btn btn-danger" onclick="deleteTask('${task.id}')">Delete Task</button>` : ''}
+                    </div>
+                ` : ''}
+            `;
+
+            document.getElementById('taskModalContent').innerHTML = modalContent;
+            document.getElementById('taskModal').classList.add('active');
+        }
+
+        function closeTaskModal() {
+            document.getElementById('taskModal').classList.remove('active');
+        }
+
+        function updateTaskStatus(taskId) {
+            const newStatus = document.getElementById('updateStatus').value;
+            const task = tasks.find(t => t.id === taskId);
+            
+            if (task) {
+                const oldStatus = task.status;
+                task.status = newStatus;
+                
+                // Add completion date when task is marked as completed
+                if (newStatus === 'Completed' && oldStatus !== 'Completed') {
+                    task.completedDate = new Date().toISOString().split('T')[0];
+                }
+                
+                // Remove completion date if status changed from completed to something else
+                if (newStatus !== 'Completed' && oldStatus === 'Completed') {
+                    delete task.completedDate;
+                }
+                
+                saveData();
+                closeTaskModal();
+                loadDashboard();
+                loadTasks();
+                alert('Task status updated successfully!');
+            }
+        }
+
+        // Delete Task (Admin Only)
+        function deleteTask(taskId) {
+            if (currentUser.role !== 'admin') {
+                alert('Only Admin can delete tasks!');
+                return;
+            }
+
+            const task = tasks.find(t => t.id === taskId);
+            if (!task) {
+                alert('Task not found!');
+                return;
+            }
+
+            const confirmMessage = `Are you sure you want to DELETE this task?\n\nTask: ${task.title}\nCategory: ${task.category}\nStatus: ${task.status}\n\n⚠️ This action CANNOT be undone!`;
+            
+            if (!confirm(confirmMessage)) {
+                return;
+            }
+
+            // Double confirmation for extra safety
+            if (!confirm('Final confirmation: Delete this task permanently?')) {
+                return;
+            }
+
+            // Remove task from array
+            tasks = tasks.filter(t => t.id !== taskId);
+            saveData();
+
+            closeTaskModal();
+            loadDashboard();
+            loadTasks();
+            
+            alert('Task deleted successfully!');
+        }
+
+        // Employees Management
+        function loadEmployees() {
+            // Only admin and managers can see this
+            if (currentUser.role !== 'admin' && currentUser.role !== 'manager') {
+                return;
+            }
+
+            const employees = users.filter(u => u.role === 'employee');
+            
+            if (employees.length === 0) {
+                document.getElementById('employeesList').innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">👥</div>
+                        <h3>No employees found</h3>
+                        <p>Add your first employee to get started.</p>
+                    </div>
+                `;
+            } else {
+                document.getElementById('employeesList').innerHTML = employees.map(emp => `
+                    <div class="task-card">
+                        <div class="task-header">
+                            <div>
+                                <div class="task-title">${emp.name}</div>
+                                <div style="color: #6b7280; font-size: 14px; margin-top: 5px;">
+                                    ID: ${emp.id} | Email: ${emp.email || 'N/A'} | Dept: ${emp.department || 'N/A'}
+                                </div>
+                            </div>
+                            <div style="display: flex; gap: 10px; align-items: center;">
+                                <span class="badge" style="background: #e0e7ff; color: #3730a3;">
+                                    ${tasks.filter(t => t.assignedTo === emp.id).length} Tasks
+                                </span>
+                                ${currentUser.role === 'admin' ? `<button class="btn btn-danger" style="padding: 6px 12px; font-size: 12px;" onclick="deleteUser('${emp.id}')">Delete</button>` : ''}
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+        }
+
+        // Managers Management (Admin Only)
+        function loadManagers() {
+            if (currentUser.role !== 'admin') {
+                return;
+            }
+
+            const managers = users.filter(u => u.role === 'manager');
+            
+            if (managers.length === 0) {
+                document.getElementById('managersList').innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">👔</div>
+                        <h3>No managers found</h3>
+                        <p>Add your first manager to get started.</p>
+                    </div>
+                `;
+            } else {
+                document.getElementById('managersList').innerHTML = managers.map(mgr => `
+                    <div class="task-card">
+                        <div class="task-header">
+                            <div>
+                                <div class="task-title">${mgr.name}</div>
+                                <div style="color: #6b7280; font-size: 14px; margin-top: 5px;">
+                                    ID: ${mgr.id} | Email: ${mgr.email || 'N/A'} | Dept: ${mgr.department || 'N/A'}
+                                </div>
+                            </div>
+                            <div style="display: flex; gap: 10px; align-items: center;">
+                                <span class="badge" style="background: #fef3c7; color: #92400e;">
+                                    ${tasks.filter(t => t.assignedBy === mgr.id).length} Tasks Assigned
+                                </span>
+                                <button class="btn btn-danger" style="padding: 6px 12px; font-size: 12px;" onclick="deleteUser('${mgr.id}')">Delete</button>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+        }
+
+        // All Users Management (Admin Only)
+        let currentUserFilter = 'all';
+
+        function loadAllUsers() {
+            if (currentUser.role !== 'admin') {
+                return;
+            }
+
+            let filteredUsers = users;
+            
+            if (currentUserFilter !== 'all') {
+                filteredUsers = users.filter(u => u.role === currentUserFilter);
+            }
+
+            if (filteredUsers.length === 0) {
+                document.getElementById('allUsersList').innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">🔧</div>
+                        <h3>No users found</h3>
+                        <p>No users match the selected filter.</p>
+                    </div>
+                `;
+            } else {
+                document.getElementById('allUsersList').innerHTML = filteredUsers.map(user => {
+                    const roleColors = {
+                        admin: 'background: #dc2626; color: white;',
+                        manager: 'background: #f59e0b; color: white;',
+                        employee: 'background: #3b82f6; color: white;'
+                    };
+                    
+                    const taskCount = user.role === 'manager' 
+                        ? tasks.filter(t => t.assignedBy === user.id).length 
+                        : tasks.filter(t => t.assignedTo === user.id).length;
+                    
+                    return `
+                        <div class="task-card">
+                            <div class="task-header">
+                                <div>
+                                    <div class="task-title">${user.name}</div>
+                                    <div style="color: #6b7280; font-size: 14px; margin-top: 5px;">
+                                        ID: ${user.id} | Email: ${user.email || 'N/A'} | Dept: ${user.department || 'N/A'}
+                                    </div>
+                                    <div class="task-meta" style="margin-top: 8px;">
+                                        <span class="badge" style="${roleColors[user.role]}">${user.role.toUpperCase()}</span>
+                                        <span class="badge" style="background: #e0e7ff; color: #3730a3;">
+                                            ${taskCount} Tasks
+                                        </span>
+                                    </div>
+                                </div>
+                                <div>
+                                    ${user.role !== 'admin' ? `<button class="btn btn-danger" style="padding: 6px 12px; font-size: 12px;" onclick="deleteUser('${user.id}')">Delete</button>` : '<span style="color: #6b7280; font-size: 12px;">Protected</span>'}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+        }
+
+        function filterUsers(role) {
+            currentUserFilter = role;
+            document.querySelectorAll('#usersSection .filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            loadAllUsers();
+        }
+
+        function deleteUser(userId) {
+            if (!confirm('Are you sure you want to delete this user? This action cannot be undone.')) {
+                return;
+            }
+
+            // Prevent deleting admin
+            const user = users.find(u => u.id === userId);
+            if (user && user.role === 'admin') {
+                alert('Cannot delete admin user!');
+                return;
+            }
+
+            // Check if user has assigned tasks
+            const userTasks = tasks.filter(t => t.assignedTo === userId || t.assignedBy === userId);
+            if (userTasks.length > 0) {
+                if (!confirm(`This user has ${userTasks.length} associated tasks. Delete anyway?`)) {
+                    return;
+                }
+            }
+
+            users = users.filter(u => u.id !== userId);
+            saveData();
+            
+            alert('User deleted successfully!');
+            
+            // Refresh the appropriate view
+            if (currentUser.role === 'admin') {
+                loadAllUsers();
+                loadManagers();
+                loadEmployees();
+            } else {
+                loadEmployees();
+            }
+        }
+
+        function showAddManagerModal() {
+            document.getElementById('managerModal').classList.add('active');
+        }
+
+        function closeManagerModal() {
+            document.getElementById('managerModal').classList.remove('active');
+            document.getElementById('addManagerForm').reset();
+        }
+
+        document.getElementById('addManagerForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            if (currentUser.role !== 'admin') {
+                alert('Only admin can add managers!');
+                return;
+            }
+            
+            const newManager = {
+                id: document.getElementById('mgrId').value,
+                password: document.getElementById('mgrPassword').value,
+                name: document.getElementById('mgrName').value,
+                role: 'manager',
+                email: document.getElementById('mgrEmail').value,
+                department: document.getElementById('mgrDepartment').value
+            };
+
+            // Check if ID already exists
+            if (users.find(u => u.id === newManager.id)) {
+                alert('User ID already exists!');
+                return;
+            }
+
+            users.push(newManager);
+            saveData();
+            
+            alert('Manager added successfully!');
+            closeManagerModal();
+            loadManagers();
+            loadAllUsers();
+        });
+
+        function showAddEmployeeModal() {
+            document.getElementById('employeeModal').classList.add('active');
+        }
+
+        function closeEmployeeModal() {
+            document.getElementById('employeeModal').classList.remove('active');
+            document.getElementById('addEmployeeForm').reset();
+        }
+
+        document.getElementById('addEmployeeForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Only admin and managers can add employees
+            if (currentUser.role !== 'admin' && currentUser.role !== 'manager') {
+                alert('You do not have permission to add employees!');
+                return;
+            }
+            
+            const newEmployee = {
+                id: document.getElementById('empId').value,
+                password: document.getElementById('empPassword').value,
+                name: document.getElementById('empName').value,
+                role: 'employee',
+                email: document.getElementById('empEmail').value,
+                department: document.getElementById('empDepartment').value
+            };
+
+            // Check if ID already exists
+            if (users.find(u => u.id === newEmployee.id)) {
+                alert('User ID already exists!');
+                return;
+            }
+
+            users.push(newEmployee);
+            saveData();
+            
+            alert('Employee added successfully!');
+            closeEmployeeModal();
+            loadEmployees();
+            if (currentUser.role === 'admin') {
+                loadAllUsers();
+            }
+        });
+
+        // Change Password Functionality
+        document.getElementById('changePasswordForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const currentPassword = document.getElementById('currentPassword').value;
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            
+            // Verify current password
+            if (currentUser.password !== currentPassword) {
+                alert('Current password is incorrect!');
+                return;
+            }
+            
+            // Check if new passwords match
+            if (newPassword !== confirmPassword) {
+                alert('New passwords do not match!');
+                return;
+            }
+            
+            // Check minimum length
+            if (newPassword.length < 6) {
+                alert('Password must be at least 6 characters long!');
+                return;
+            }
+            
+            // Check if new password is same as current
+            if (newPassword === currentPassword) {
+                alert('New password must be different from current password!');
+                return;
+            }
+            
+            // Update password
+            const userIndex = users.findIndex(u => u.id === currentUser.id);
+            if (userIndex !== -1) {
+                users[userIndex].password = newPassword;
+                currentUser.password = newPassword;
+                saveData();
+                
+                // Clear form
+                document.getElementById('changePasswordForm').reset();
+                
+                alert('Password changed successfully! Please remember your new password.');
+            } else {
+                alert('Error: User not found!');
+            }
+        });
+
+        // Export to Google Sheets
+        function exportAllTasks() {
+            if (currentUser.role !== 'admin' && currentUser.role !== 'manager') {
+                alert('Only Admin and Managers can export data!');
+                return;
+            }
+            
+            const csvContent = generateCSV(tasks);
+            downloadCSV(csvContent, 'law_hands_all_tasks.csv');
+            
+            alert('All tasks exported successfully!\n\nNext steps:\n1. Open Google Sheets\n2. Click File → Import\n3. Upload the downloaded CSV file');
+        }
+
+        function exportByDateRange() {
+            if (currentUser.role !== 'admin' && currentUser.role !== 'manager') {
+                alert('Only Admin and Managers can export data!');
+                return;
+            }
+            
+            const startDate = document.getElementById('exportStartDate').value;
+            const endDate = document.getElementById('exportEndDate').value;
+            
+            if (!startDate || !endDate) {
+                alert('Please select both start and end dates');
+                return;
+            }
+            
+            if (new Date(startDate) > new Date(endDate)) {
+                alert('Start date cannot be after end date');
+                return;
+            }
+            
+            // Filter tasks by date range
+            const start = new Date(startDate);
+            const end = new Date(endDate);
+            end.setHours(23, 59, 59, 999); // Include entire end date
+            
+            const filteredTasks = tasks.filter(task => {
+                const taskDate = new Date(task.createdDate);
+                return taskDate >= start && taskDate <= end;
+            });
+            
+            if (filteredTasks.length === 0) {
+                alert('No tasks found in the selected date range');
+                return;
+            }
+            
+            const csvContent = generateCSV(filteredTasks);
+            const filename = `law_hands_tasks_${startDate}_to_${endDate}.csv`;
+            downloadCSV(csvContent, filename);
+            
+            alert(`Exported ${filteredTasks.length} tasks from ${startDate} to ${endDate}\n\nNext steps:\n1. Open Google Sheets\n2. Click File → Import\n3. Upload the downloaded CSV file`);
+        }
+
+        function generateCSV(taskList) {
+            let csv = 'Task ID,Category,Subcategory,Title,Description,Assigned To,Assigned To Name,Assigned By,Assigned By Name,Status,Priority,Due Date,Created Date,Completed Date\n';
+            
+            taskList.forEach(task => {
+                const employee = users.find(u => u.id === task.assignedTo);
+                const manager = users.find(u => u.id === task.assignedBy);
+                
+                csv += `"${task.id}","${task.category}","${task.subcategory}","${task.title}","${task.description || ''}","${task.assignedTo}","${employee ? employee.name : 'Unknown'}","${task.assignedBy}","${manager ? manager.name : 'Unknown'}","${task.status}","${task.priority}","${task.dueDate}","${task.createdDate}","${task.completedDate || 'N/A'}"\n`;
+            });
+            
+            return csv;
+        }
+
+        function downloadCSV(csvContent, filename) {
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = window.URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = filename;
+            link.click();
+            window.URL.revokeObjectURL(url);
+        }
+
+        // Legacy function for compatibility (redirects to export section)
+        function exportToGoogleSheets() {
+            showSection('export');
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set minimum date for task due date to today
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('taskDueDate').min = today;
+        });
+    </script>
+</body>
+</html>
